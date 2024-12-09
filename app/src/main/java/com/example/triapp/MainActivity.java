@@ -40,99 +40,94 @@ public class MainActivity extends AppCompatActivity {
         infoLayout = findViewById(R.id.infoLayout);
         searchEditText = findViewById(R.id.searchEditText);
 
-        // Charger les données depuis le fichier CSV
-        listeDechets = CSVReader.readDechetsFromCSV(getResources(), R.raw.dechets);
+        // Initialiser les données
+        listeDechets = new ArrayList<>();
+        listeDechets.add(new Dechet("Bouteille en plastique", "Poubelle Jaune", R.drawable.poubelle_jaune));
+        listeDechets.add(new Dechet("Papier", "Poubelle Bleue", R.drawable.poubelle_bleue));
+        listeDechets.add(new Dechet("Verre", "Poubelle Verte", R.drawable.poubelle_verte));
+        listeDechets.add(new Dechet("Déchets organiques", "Poubelle Marron", R.drawable.poubelle_marron));
 
-        // Extraire les noms des déchets
+        // Extraire uniquement les noms des déchets pour l'affichage
         List<String> nomsDechets = new ArrayList<>();
         for (Dechet dechet : listeDechets) {
             nomsDechets.add(dechet.getNom());
         }
 
-        // Configurer l'adaptateur pour la liste des noms
+        // Configurer l'adaptateur pour afficher les noms dans la liste
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nomsDechets);
         listViewDechets.setAdapter(adapter);
 
-        // Ajout d'un écouteur pour rechercher dynamiquement
+        // Ajouter un TextWatcher pour le filtrage de la liste
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Appliquer le filtre sur l'adaptateur
                 adapter.getFilter().filter(charSequence);
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+            }
         });
 
-        // Gestion de l'événement "Entrée" sur le champ de recherche
+        // Ajouter un écouteur pour le bouton "Entrée" (recherche)
         searchEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
                 String query = searchEditText.getText().toString().trim();
 
-                // Vérifier si le déchet existe
+                // Vérifier si la recherche correspond à un déchet
                 for (Dechet dechet : listeDechets) {
                     if (dechet.getNom().equalsIgnoreCase(query)) {
-                        afficherDechet(dechet);
-                        return true;
+                        // Mettre à jour les informations
+                        dechetTextView.setText("Déchet : " + dechet.getNom());
+                        poubelleTextView.setText("Poubelle : " + dechet.getPoubelle());
+                        poubelleImageView.setImageResource(dechet.getImageResId());
+
+                        // Afficher la section avec une animation
+                        infoLayout.setVisibility(View.VISIBLE);
+                        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+                        animation.setDuration(500);
+                        infoLayout.startAnimation(animation);
+                        return true; // On arrête ici car le déchet a été trouvé
                     }
                 }
 
-                // Si aucun déchet correspondant n'est trouvé
-                afficherDechetIntrouvable();
-                return true;
+                // Si aucun déchet n'a été trouvé
+                dechetTextView.setText("Déchet introuvable");
+                poubelleTextView.setText("");
+                poubelleImageView.setImageResource(0);
+                infoLayout.setVisibility(View.VISIBLE);
+
+                return true; // Indique que l'action a été gérée
             }
-            return false;
+            return false; // Indique que l'action n'a pas été gérée
         });
 
-        // Gérer la sélection dans la liste
+        // Ajouter un clic pour afficher la poubelle associée
         listViewDechets.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-            Dechet dechetSelectionne = listeDechets.get(position);
-            afficherDechet(dechetSelectionne);
+            // Récupérer le nom du déchet sélectionné dans la liste visible
+            String nomDechetSelectionne = (String) parent.getItemAtPosition(position);
+
+            // Trouver le déchet correspondant dans la liste complète
+            for (Dechet dechet : listeDechets) {
+                if (dechet.getNom().equals(nomDechetSelectionne)) {
+                    // Mettre à jour les informations
+                    dechetTextView.setText("Déchet : " + dechet.getNom());
+                    poubelleTextView.setText("Poubelle : " + dechet.getPoubelle());
+                    poubelleImageView.setImageResource(dechet.getImageResId());
+
+                    // Afficher la section avec une animation
+                    infoLayout.setVisibility(View.VISIBLE);
+                    AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+                    animation.setDuration(500);
+                    infoLayout.startAnimation(animation);
+                    break;
+                }
+            }
         });
-    }
-
-    private void afficherDechet(Dechet dechet) {
-        // Mettre à jour les informations
-        dechetTextView.setText("Déchet : " + dechet.getNom());
-        poubelleTextView.setText("Details : " + dechet.getPoubelle());
-        poubelleImageView.setImageResource(getImageResourceForDechet(dechet.getPoubelle()));
-
-        // Afficher la section avec une animation
-        infoLayout.setVisibility(View.VISIBLE);
-        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(500);
-        infoLayout.startAnimation(animation);
-    }
-
-    private void afficherDechetIntrouvable() {
-        // Afficher un message pour un déchet introuvable
-        dechetTextView.setText("Déchet introuvable");
-        poubelleTextView.setText("");
-        poubelleImageView.setImageResource(0); // Pas d'image pour un déchet introuvable
-        infoLayout.setVisibility(View.VISIBLE);
-
-        // Animation pour la visibilité
-        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setDuration(500);
-        infoLayout.startAnimation(animation);
-    }
-
-    // Méthode pour récupérer l'image associée à une poubelle
-    private int getImageResourceForDechet(String typePoubelle) {
-        switch (typePoubelle.toLowerCase()) {
-            case "poubelle verte":
-                return R.drawable.poubelle_verte;
-            case "poubelle jaune":
-                return R.drawable.poubelle_jaune;
-            case "poubelle marron":
-                return R.drawable.poubelle_marron;
-            case "poubelle bleue":
-                return R.drawable.poubelle_bleue;
-            default:
-                return R.drawable.poubelle_jaune;
-        }
     }
 }
