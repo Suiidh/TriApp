@@ -5,68 +5,24 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Barre de recherche -->
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Rechercher un déchet"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:padding="10dp"
-        android:background="@drawable/edittext_background"
-        android:layout_marginBottom="10dp" />
+        android:hint="Rechercher un type de déchet"
+        android:inputType="text" />
 
-    <!-- Liste des déchets -->
     <ListView
         android:id="@+id/listViewDechets"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
 
-    <!-- Section d'information -->
-    <LinearLayout
-        android:id="@+id/infoLayout"
+    <TextView
+        android:id="@+id/pointsCollecteTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@drawable/info_background"
-        android:visibility="gone"
-        android:gravity="center"
-        android:layout_marginTop="10dp">
-
-        <ImageView
-            android:id="@+id/poubelleImageView"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="Icône de poubelle" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/dechetTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Déchet :"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:id="@+id/poubelleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Poubelle :"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:text="Sélectionnez un type de déchet pour voir les points de collecte." />
 </LinearLayout>
