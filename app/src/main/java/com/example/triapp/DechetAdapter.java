@@ -64,28 +64,28 @@ public class DechetAdapter extends BaseAdapter {
         // Ajouter un clic sur le bouton
         voirPlusButton.setOnClickListener(v -> {
             List<String> pointsCollecte = dechetsMap.get(typeDechet);
-            int imageResId = getPoubelleImageForDechet(typeDechet); // Récupérer l'image associée
 
             if (pointsCollecte != null && !pointsCollecte.isEmpty()) {
                 // Organiser les données par commune
                 Map<String, List<String>> collecteParCommune = CollecteUtils.organiserParCommune(pointsCollecte);
                 List<String> communes = new ArrayList<>(collecteParCommune.keySet());
 
-                // Configurer et afficher la boîte de dialogue
-                View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_poubelle_info, null);
+                // Créer la vue du dialogue
+                View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_communes, null);
 
-                // Associer l'image
+                // Associer l'image en fonction du type de déchet
                 ImageView dialogImage = dialogView.findViewById(R.id.dialogImage);
+                int imageResId = getPoubelleImageForDechet(typeDechet);
                 dialogImage.setImageResource(imageResId);
 
-                // Configurer le RecyclerView
-                RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerViewCollecte);
+                // Configurer le RecyclerView pour afficher les communes
+                RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerViewCommunes);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                recyclerView.setAdapter(new CollecteAdapter(context, collecteParCommune, communes));
+                recyclerView.setAdapter(new CommuneAdapter(context, communes, collecteParCommune));
 
                 // Afficher le dialogue
                 new AlertDialog.Builder(context)
-                        .setTitle("Points de collecte")
+                        .setTitle("Choisissez une commune")
                         .setView(dialogView)
                         .setPositiveButton("Fermer", null)
                         .show();

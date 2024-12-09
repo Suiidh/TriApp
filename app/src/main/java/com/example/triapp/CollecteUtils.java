@@ -13,8 +13,8 @@ public class CollecteUtils {
         for (String point : pointsCollecte) {
             String[] parts = point.split(","); // Supposons que "Commune, Adresse" est le format
             if (parts.length == 2) {
-                String commune = parts[0].trim();
-                String adresse = parts[1].trim();
+                String commune = parts[1].trim();
+                String adresse = parts[0].trim();
 
                 collecteParCommune.computeIfAbsent(commune, k -> new ArrayList<>()).add(adresse);
             }
