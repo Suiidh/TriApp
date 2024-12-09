@@ -8,9 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,36 +63,35 @@ public class DechetAdapter extends BaseAdapter {
 
         // Ajouter un clic sur le bouton
         voirPlusButton.setOnClickListener(v -> {
-            // Récupérer les points de collecte
             List<String> pointsCollecte = dechetsMap.get(typeDechet);
+            int imageResId = getPoubelleImageForDechet(typeDechet); // Récupérer l'image associée
 
-            // Récupérer l'image associée à ce type de déchet
-            int imageResId = getPoubelleImageForDechet(typeDechet);
-
-            // Construire le message des points de collecte
-            StringBuilder message = new StringBuilder();
             if (pointsCollecte != null && !pointsCollecte.isEmpty()) {
-                message.append("Points de collecte pour ").append(typeDechet).append(":\n\n");
-                for (String point : pointsCollecte) {
-                    message.append("- ").append(point).append("\n");
-                }
+                // Organiser les données par commune
+                Map<String, List<String>> collecteParCommune = CollecteUtils.organiserParCommune(pointsCollecte);
+                List<String> communes = new ArrayList<>(collecteParCommune.keySet());
+
+                // Configurer et afficher la boîte de dialogue
+                View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_poubelle_info, null);
+
+                // Associer l'image
+                ImageView dialogImage = dialogView.findViewById(R.id.dialogImage);
+                dialogImage.setImageResource(imageResId);
+
+                // Configurer le RecyclerView
+                RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerViewCollecte);
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setAdapter(new CollecteAdapter(context, collecteParCommune, communes));
+
+                // Afficher le dialogue
+                new AlertDialog.Builder(context)
+                        .setTitle("Points de collecte")
+                        .setView(dialogView)
+                        .setPositiveButton("Fermer", null)
+                        .show();
             } else {
-                message.append("Aucun point de collecte trouvé pour ce type de déchet.");
+                Toast.makeText(context, "Aucun point de collecte trouvé pour ce type de déchet.", Toast.LENGTH_SHORT).show();
             }
-
-            // Afficher une boîte de dialogue avec l'image et les points de collecte
-            View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_poubelle_info, null);
-            TextView dialogMessage = dialogView.findViewById(R.id.dialogMessage);
-            ImageView dialogImage = dialogView.findViewById(R.id.dialogImage);
-
-            dialogMessage.setText(message.toString());
-            dialogImage.setImageResource(imageResId);
-
-            new AlertDialog.Builder(context)
-                    .setTitle(typeDechet)
-                    .setView(dialogView)
-                    .setPositiveButton("OK", null)
-                    .show();
         });
 
         return convertView;
@@ -96,7 +99,11 @@ public class DechetAdapter extends BaseAdapter {
 
     // Méthode pour récupérer l'image de la poubelle en fonction du type de déchet
     private int getPoubelleImageForDechet(String typeDechet) {
-        switch (typeDechet.toLowerCase()) {
+        if (typeDechet == null) {
+            return R.drawable.poubelle_jaune; // Par défaut
+        }
+
+        switch (typeDechet.trim().toLowerCase()) {
             case "verre":
                 return R.drawable.poubelle_verte;
             case "papier":
