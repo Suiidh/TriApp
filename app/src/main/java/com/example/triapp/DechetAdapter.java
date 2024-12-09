@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.List;
 import java.util.Map;
@@ -59,26 +62,51 @@ public class DechetAdapter extends BaseAdapter {
             // Récupérer les points de collecte
             List<String> pointsCollecte = dechetsMap.get(typeDechet);
 
-            // Afficher une boîte de dialogue avec les points de collecte
+            // Récupérer l'image associée à ce type de déchet
+            int imageResId = getPoubelleImageForDechet(typeDechet);
+
+            // Construire le message des points de collecte
+            StringBuilder message = new StringBuilder();
             if (pointsCollecte != null && !pointsCollecte.isEmpty()) {
-                StringBuilder message = new StringBuilder("Points de collecte pour ").append(typeDechet).append(":\n\n");
+                message.append("Points de collecte pour ").append(typeDechet).append(":\n\n");
                 for (String point : pointsCollecte) {
                     message.append("- ").append(point).append("\n");
                 }
-                new androidx.appcompat.app.AlertDialog.Builder(context)
-                        .setTitle("Points de collecte")
-                        .setMessage(message.toString())
-                        .setPositiveButton("OK", null)
-                        .show();
             } else {
-                new androidx.appcompat.app.AlertDialog.Builder(context)
-                        .setTitle("Points de collecte")
-                        .setMessage("Aucun point de collecte trouvé pour ce type de déchet.")
-                        .setPositiveButton("OK", null)
-                        .show();
+                message.append("Aucun point de collecte trouvé pour ce type de déchet.");
             }
+
+            // Afficher une boîte de dialogue avec l'image et les points de collecte
+            View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_poubelle_info, null);
+            TextView dialogMessage = dialogView.findViewById(R.id.dialogMessage);
+            ImageView dialogImage = dialogView.findViewById(R.id.dialogImage);
+
+            dialogMessage.setText(message.toString());
+            dialogImage.setImageResource(imageResId);
+
+            new AlertDialog.Builder(context)
+                    .setTitle(typeDechet)
+                    .setView(dialogView)
+                    .setPositiveButton("OK", null)
+                    .show();
         });
 
         return convertView;
+    }
+
+    // Méthode pour récupérer l'image de la poubelle en fonction du type de déchet
+    private int getPoubelleImageForDechet(String typeDechet) {
+        switch (typeDechet.toLowerCase()) {
+            case "verre":
+                return R.drawable.poubelle_verte;
+            case "papier":
+                return R.drawable.poubelle_bleue;
+            case "plastique":
+                return R.drawable.poubelle_jaune;
+            case "déchets organiques":
+                return R.drawable.poubelle_marron;
+            default:
+                return R.drawable.poubelle_jaune; // Par défaut
+        }
     }
 }
