@@ -3,15 +3,8 @@ package com.example.triapp;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Map<String, List<String>> dechetsMap;
     private ListView listViewDechets;
-    private TextView pointsCollecteTextView;
     private EditText searchEditText;
 
     @Override
@@ -33,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialiser les vues
         listViewDechets = findViewById(R.id.listViewDechets);
-        pointsCollecteTextView = findViewById(R.id.pointsCollecteTextView);
         searchEditText = findViewById(R.id.searchEditText);
 
         // Charger les données depuis le fichier CSV
@@ -42,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         // Extraire les types de déchets
         List<String> typesDechets = new ArrayList<>(dechetsMap.keySet());
 
-        // Configurer l'adaptateur pour la liste des types de déchets
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, typesDechets);
+        // Configurer l'adaptateur personnalisé
+        DechetAdapter adapter = new DechetAdapter(this, typesDechets, dechetsMap);
         listViewDechets.setAdapter(adapter);
 
         // Ajout d'un écouteur pour rechercher dynamiquement
@@ -53,33 +44,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                adapter.getFilter().filter(charSequence);
+                // Filtrer les types de déchets
+                List<String> filteredDechets = new ArrayList<>();
+                for (String typeDechet : typesDechets) {
+                    if (typeDechet.toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filteredDechets.add(typeDechet);
+                    }
+                }
+
+                // Mettre à jour l'adapter
+                DechetAdapter filteredAdapter = new DechetAdapter(MainActivity.this, filteredDechets, dechetsMap);
+                listViewDechets.setAdapter(filteredAdapter);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {}
         });
-
-        // Gérer la sélection dans la liste
-        listViewDechets.setOnItemClickListener((parent, view, position, id) -> {
-            String typeDechet = typesDechets.get(position);
-            afficherPointsCollecte(typeDechet);
-        });
-    }
-
-    private void afficherPointsCollecte(String typeDechet) {
-        // Obtenir les points de collecte pour ce type de déchet
-        List<String> pointsCollecte = dechetsMap.get(typeDechet);
-
-        // Afficher les points de collecte
-        if (pointsCollecte != null && !pointsCollecte.isEmpty()) {
-            StringBuilder sb = new StringBuilder("Points de collecte pour ").append(typeDechet).append(":\n\n");
-            for (String point : pointsCollecte) {
-                sb.append("- ").append(point).append("\n");
-            }
-            pointsCollecteTextView.setText(sb.toString());
-        } else {
-            pointsCollecteTextView.setText("Aucun point de collecte trouvé pour ce type de déchet.");
-        }
     }
 }
