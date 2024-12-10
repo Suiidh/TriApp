@@ -9,8 +9,8 @@
     <!-- Image de la poubelle -->
     <ImageView
         android:id="@+id/dialogImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="Image de la poubelle"
         android:src="@drawable/poubelle_jaune"

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class DechetAdapter extends BaseAdapter {
 
     public DechetAdapter(Context context, List<String> typesDechets, Map<String, List<String>> dechetsMap) {
         this.context = context;
-        this.typesDechets = typesDechets;
-        this.dechetsMap = dechetsMap;
+        this.typesDechets = nettoyerListe(typesDechets); // Nettoyer les types de déchets
+        this.dechetsMap = nettoyerDechetsMap(dechetsMap); // Nettoyer les clés de la map
     }
 
     @Override
@@ -62,8 +63,9 @@ public class DechetAdapter extends BaseAdapter {
         typeDechetTextView.setText(typeDechet);
 
         // Ajouter un clic sur le bouton
+        String finalTypeDechet = typeDechet;
         voirPlusButton.setOnClickListener(v -> {
-            List<String> pointsCollecte = dechetsMap.get(typeDechet);
+            List<String> pointsCollecte = dechetsMap.get(finalTypeDechet);
 
             if (pointsCollecte != null && !pointsCollecte.isEmpty()) {
                 // Organiser les données par commune
@@ -75,7 +77,7 @@ public class DechetAdapter extends BaseAdapter {
 
                 // Associer l'image en fonction du type de déchet
                 ImageView dialogImage = dialogView.findViewById(R.id.dialogImage);
-                int imageResId = getPoubelleImageForDechet(typeDechet);
+                int imageResId = getPoubelleImageForDechet(finalTypeDechet);
                 dialogImage.setImageResource(imageResId);
 
                 // Configurer le RecyclerView pour afficher les communes
@@ -115,5 +117,26 @@ public class DechetAdapter extends BaseAdapter {
             default:
                 return R.drawable.poubelle_jaune; // Par défaut
         }
+    }
+
+    // Nettoyer une liste (par exemple, types de déchets)
+    private List<String> nettoyerListe(List<String> liste) {
+        List<String> listeNettoyee = new ArrayList<>();
+        for (String element : liste) {
+            listeNettoyee.add(element.replace("\"", "").trim());
+        }
+        return listeNettoyee;
+    }
+
+    // Nettoyer les clés de la map de déchets
+    private Map<String, List<String>> nettoyerDechetsMap(Map<String, List<String>> map) {
+        Map<String, List<String>> mapNettoyee = new HashMap<>();
+
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            String cleNettoyee = entry.getKey().replace("\"", "").trim();
+            mapNettoyee.put(cleNettoyee, entry.getValue());
+        }
+
+        return mapNettoyee;
     }
 }
