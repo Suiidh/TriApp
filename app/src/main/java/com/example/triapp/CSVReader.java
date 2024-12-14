@@ -34,7 +34,8 @@ public class CSVReader {
                     String adresse = parts[5].trim();   // Colonne "adresse"
                     String commune = parts[3].trim();  // Colonne "commune"
 
-                    String pointCollecte = "Adresse : " + adresse + ", Commune : " + commune;
+                    // Concaténer adresse et commune sans préfixes
+                    String pointCollecte = adresse + ", " + commune;
 
                     // Ajouter le point de collecte au type de déchet
                     dechetsMap.putIfAbsent(typeDechet, new ArrayList<>());
@@ -54,4 +55,3 @@ public class CSVReader {
         return dechetsMap;
     }
 }
-

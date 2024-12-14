@@ -16,6 +16,17 @@
         android:src="@drawable/poubelle_jaune"
         android:layout_marginBottom="16dp" />
 
+    <!-- Titre "Communes" -->
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Communes"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
     <!-- Liste des communes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCommunes"

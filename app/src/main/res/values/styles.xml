@@ -1,0 +1,8 @@
+<resources>
+    <style name="CardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">8dp</item> <!-- Ombres -->
+        <item name="cardCornerRadius">12dp</item> <!-- Coins arrondis -->
+        <item name="cardBackgroundColor">@color/white</item> <!-- Couleur de fond -->
+        <item name="android:layout_margin">8dp</item> <!-- Marges autour des cartes -->
+    </style>
+</resources>

@@ -115,7 +115,7 @@ public class DechetAdapter extends BaseAdapter {
             case "déchets organiques":
                 return R.drawable.poubelle_marron;
             default:
-                return R.drawable.poubelle_jaune; // Par défaut
+                return R.drawable.poubelle_grise; // Par défaut
         }
     }
 
