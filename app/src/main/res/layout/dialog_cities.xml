@@ -13,7 +13,7 @@
         android:layout_height="160dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="Image de la poubelle"
-        android:src="@drawable/poubelle_jaune"
+        android:src="@drawable/bin_yellow"
         android:layout_marginBottom="16dp" />
 
     <!-- Titre "Communes" -->
@@ -29,7 +29,7 @@
 
     <!-- Liste des communes -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCommunes"
+        android:id="@+id/recyclerViewCities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp" />
