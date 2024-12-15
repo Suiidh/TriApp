@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +27,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
     public CityAdapter(Context context, List<String> cities, Map<String, List<String>> collectionByCity) {
         this.context = context;
-        this.originalCities = new ArrayList<>(cities);
-        this.filteredCities = new ArrayList<>(cities); // copie initiale
+        this.originalCities = cities;
+        this.filteredCities =  new ArrayList<>(cities);
         this.collectionByCity = collectionByCity;
     }
 
@@ -39,7 +40,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String city = filteredCities.get(position);
         holder.cityName.setText(city);
 
@@ -70,14 +71,30 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     private void showAddressesDialog(String city) {
         List<String> addresses = collectionByCity.get(city);
         if (addresses == null || addresses.isEmpty()) {
-            Toast.makeText(context, "Aucunes adresses trouvée pour cette commune.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Aucune adresse trouvée pour cette commune.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_addresses, null);
         RecyclerView recyclerViewAddresses = dialogView.findViewById(R.id.recyclerViewAddresses);
         recyclerViewAddresses.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAddresses.setAdapter(new AddressAdapter(context, addresses));
+
+        AddressAdapter addressAdapter = new AddressAdapter(context, addresses);
+        recyclerViewAddresses.setAdapter(addressAdapter);
+
+        EditText searchAddressesEditText = dialogView.findViewById(R.id.searchAddressesEditText);
+        searchAddressesEditText.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                addressAdapter.filterAddresses(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) { }
+        });
 
         new AlertDialog.Builder(context)
                 .setTitle("Adresses dans " + city)

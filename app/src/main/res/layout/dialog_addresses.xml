@@ -1,5 +1,25 @@
-<androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerViewAddresses"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Barre de recherche pour les adresses -->
+    <EditText
+        android:id="@+id/searchAddressesEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Rechercher une adresse"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="12dp"
+        android:inputType="text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAddresses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+</LinearLayout>
