@@ -1,5 +1,6 @@
 package com.example.triapp;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,18 +13,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<String> cities;
+    private final List<String> originalCities;
+    private final List<String> filteredCities;
     private final Map<String, List<String>> collectionByCity;
 
     public CityAdapter(Context context, List<String> cities, Map<String, List<String>> collectionByCity) {
         this.context = context;
-        this.cities = cities;
+        this.originalCities = new ArrayList<>(cities);
+        this.filteredCities = new ArrayList<>(cities); // copie initiale
         this.collectionByCity = collectionByCity;
     }
 
@@ -35,11 +39,32 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(CityAdapter.ViewHolder holder, int position) {
-        String city = cities.get(position);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        String city = filteredCities.get(position);
         holder.cityName.setText(city);
 
         holder.itemView.setOnClickListener(v -> showAddressesDialog(city));
+    }
+
+    @Override
+    public int getItemCount() {
+        return filteredCities.size();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void filterCities(String query) {
+        filteredCities.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredCities.addAll(originalCities);
+        } else {
+            String lowerQuery = query.toLowerCase();
+            for (String city : originalCities) {
+                if (city.toLowerCase().contains(lowerQuery)) {
+                    filteredCities.add(city);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     private void showAddressesDialog(String city) {
@@ -61,14 +86,8 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
                 .show();
     }
 
-    @Override
-    public int getItemCount() {
-        return cities.size();
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView cityName;
-
         public ViewHolder(View itemView) {
             super(itemView);
             cityName = itemView.findViewById(R.id.cityName);

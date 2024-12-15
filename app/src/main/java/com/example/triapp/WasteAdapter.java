@@ -1,12 +1,15 @@
 package com.example.triapp;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,7 +88,22 @@ public class WasteAdapter extends BaseAdapter {
 
         RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerViewCities);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(new CityAdapter(context, cities, collectionByCity));
+        CityAdapter cityAdapter = new CityAdapter(context, cities, collectionByCity);
+        recyclerView.setAdapter(cityAdapter);
+
+        EditText searchCitiesEditText = dialogView.findViewById(R.id.searchCitiesEditText);
+        searchCitiesEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                cityAdapter.filterCities(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         new AlertDialog.Builder(context)
                 .setTitle("Choisissez une commune")
