@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Image de la poubelle -->
+    <!-- Waste bin image -->
     <ImageView
         android:id="@+id/dialogImage"
         android:layout_width="160dp"
@@ -16,7 +16,7 @@
         android:src="@drawable/bin_yellow"
         android:layout_marginBottom="16dp" />
 
-    <!-- Titre "Communes" -->
+    <!-- Title -->
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
@@ -27,18 +27,29 @@
         android:gravity="center"
         android:layout_marginBottom="8dp" />
 
+    <!-- Nearest address section -->
+    <TextView
+        android:id="@+id/nearestAddressTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adresse la plus proche : en cours de calcul..."
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp" />
+
     <!-- Search bar for cities -->
     <EditText
         android:id="@+id/searchCitiesEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Chercher une commune"
+        android:hint="Rechercher une commune"
         android:padding="8dp"
         android:background="@android:color/white"
         android:layout_marginBottom="12dp"
         android:inputType="text" />
 
-    <!-- Liste des communes -->
+    <!-- List of cities -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCities"
         android:layout_width="match_parent"

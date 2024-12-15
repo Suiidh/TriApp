@@ -29,6 +29,9 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    public static double userLatitude = Double.NaN;
+    public static double userLongitude = Double.NaN;
+
 
     private TextView locationTextView;
 
@@ -141,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
         Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            userLatitude = latitude;
+            userLongitude = longitude;
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 String city = address.getLocality();
